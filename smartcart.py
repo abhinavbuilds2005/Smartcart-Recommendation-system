@@ -223,3 +223,40 @@ plt.close()
 st.subheader("Cluster Summary (mean values)")
 cluster_summary = X.groupby("cluster").mean()
 st.dataframe(cluster_summary.style.background_gradient(cmap="Blues"))
+
+
+st.subheader("🔮 Predict Customer Segment")
+
+st.write("Enter a new customer's details to find their segment:")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    age = st.number_input("Age", min_value=18, max_value=100, value=35)
+    income = st.number_input("Income", min_value=0, max_value=200000, value=50000)
+
+with col2:
+    spending = st.number_input("Total Spending", min_value=0, max_value=3000, value=500)
+    recency = st.number_input("Recency (days)", min_value=0, max_value=100, value=30)
+
+with col3:
+    children = st.number_input("Total Children", min_value=0, max_value=5, value=0)
+    tenure = st.number_input("Tenure (days)", min_value=0, max_value=3000, value=500)
+
+cluster_names = {
+    0: "💰 High Income, High Spender",
+    1: "👨‍👩‍👧 Family Oriented, Low Spender",
+    2: "🧑 Young, Low Income, Low Spender",
+    3: "⭐ Medium Income, Medium Spender"
+}
+
+if st.button("Predict Cluster"):
+    import numpy as np
+    sample = pd.DataFrame([[age, income, recency, 0, 0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0, tenure, spending, children,
+                            1, 0, 0, 1, 0]],
+                          columns=X.drop(columns=["cluster"]).columns)
+    sample_scaled = scaler.transform(sample)
+    sample_pca = pca.transform(sample_scaled)
+    predicted = kmeans.predict(sample_pca)[0]
+    st.success(f"This customer belongs to: **{cluster_names[predicted]}**")
