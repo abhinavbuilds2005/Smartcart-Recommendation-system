@@ -54,20 +54,24 @@ feature_cols = model_data['feature_cols']
 X_pca = model_data['X_pca']
 labels_kmeans = model_data['labels_kmeans']
 df_cleaned = model_data['df_cleaned']
-cluster_summary = model_data['cluster_summary']
+
+# Recompute explicitly from K-Means to ensure labels match! 
+df_temp = df_cleaned.copy()
+df_temp['Cluster'] = labels_kmeans
+cluster_summary = df_temp.groupby('Cluster').mean(numeric_only=True).round(2)
 
 SEGMENT_NAMES = {
     0: "Budget Families",
-    1: "Premium Families",
-    2: "Budget Singles",
-    3: "Premium Singles"
+    1: "Moderate Spenders",
+    2: "Premium Customers",
+    3: "Budget Singles"
 }
 
 SEGMENT_DESCRIPTIONS = {
     0: "Lower income, budget-conscious spenders who typically live with a partner.",
-    1: "High income, high spenders who typically live with a partner. They respond well to campaigns.",
-    2: "Lower income, budget-conscious spenders who typically live alone.",
-    3: "High income, high spenders who typically live alone. They are frequent buyers and responsive to deals."
+    1: "Middle-income earners with moderate spending. Typically older families.",
+    2: "High-income, high-spending premium customers. They have the fewest children.",
+    3: "Lower income, budget-conscious spenders who live alone."
 }
 
 st.title("🛒 SmartCart Customer Segmentation")
