@@ -56,6 +56,20 @@ labels_kmeans = model_data['labels_kmeans']
 df_cleaned = model_data['df_cleaned']
 cluster_summary = model_data['cluster_summary']
 
+SEGMENT_NAMES = {
+    0: "Budget Families",
+    1: "Premium Families",
+    2: "Budget Singles",
+    3: "Premium Singles"
+}
+
+SEGMENT_DESCRIPTIONS = {
+    0: "Lower income, budget-conscious spenders who typically live with a partner.",
+    1: "High income, high spenders who typically live with a partner. They respond well to campaigns.",
+    2: "Lower income, budget-conscious spenders who typically live alone.",
+    3: "High income, high spenders who typically live alone. They are frequent buyers and responsive to deals."
+}
+
 st.title("🛒 SmartCart Customer Segmentation")
 st.markdown("Discover customer insights and predict segments dynamically using unsupervised Machine Learning.")
 
@@ -71,9 +85,10 @@ with tab1:
         with col:
             st.markdown(f"""
             <div class="metric-card">
-                <h3>Segment {i}</h3>
+                <h4>{SEGMENT_NAMES.get(i, f'Segment {i}')}</h4>
                 <p style="font-size: 24px; font-weight: bold; color: #ff7b72;">{cluster_size}</p>
-                <p>Customers</p>
+                <p style="margin-bottom: 0px;">Customers</p>
+                <p style="font-size: 12px; color: #888; margin-top: 0px;">Segment {i}</p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -96,7 +111,9 @@ with tab1:
     ax.spines['right'].set_visible(False)
     
     # Custom legend
-    legend1 = ax.legend(*scatter.legend_elements(), title="Segments", facecolor='#1f2428', edgecolor='white', labelcolor='white')
+    handles, labels = scatter.legend_elements()
+    legend_labels = [SEGMENT_NAMES.get(int(i), f"Segment {i}") for i in range(len(handles))]
+    legend1 = ax.legend(handles, legend_labels, title="Segments", facecolor='#1f2428', edgecolor='white', labelcolor='white')
     plt.setp(legend1.get_title(), color='white')
     ax.add_artist(legend1)
     
@@ -166,10 +183,12 @@ with tab2:
         # Predict
         prediction = kmeans.predict(input_pca)[0]
         
-        st.success(f"### 🎉 Customer Belongs to **Segment {prediction}**!")
+        st.success(f"### 🎉 Customer Belongs to **{SEGMENT_NAMES.get(prediction, f'Segment {prediction}')}** (Segment {prediction})!")
         
         st.balloons()
         
+        st.info(f"**Segment Insight:** {SEGMENT_DESCRIPTIONS.get(prediction, '')}")
+        
         # Explain briefly what this segment means based on the summary
-        st.info("Segment Characteristics based on dataset average:")
-        st.write(cluster_summary.iloc[prediction:prediction+1])
+        st.write("Detailed Averages for this Segment:")
+        st.dataframe(cluster_summary.iloc[prediction:prediction+1].style.background_gradient(cmap='Blues'))
