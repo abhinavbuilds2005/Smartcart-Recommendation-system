@@ -83,8 +83,9 @@ tab1, tab2 = st.tabs(["📊 Dashboard Insights", "🔮 Predict Segment"])
 with tab1:
     st.header("Cluster Overview")
     
-    col1, col2, col3, col4 = st.columns(4)
-    for i, col in enumerate([col1, col2, col3, col4]):
+    unique_clusters = np.unique(labels_kmeans)
+    cols = st.columns(len(unique_clusters))
+    for i, col in zip(unique_clusters, cols):
         cluster_size = (labels_kmeans == i).sum()
         with col:
             st.markdown(f"""
