@@ -45,6 +45,11 @@ def load_model():
     with open('model.pkl', 'rb') as f:
         return pickle.load(f)
 
+@st.cache_resource
+def load_churn_model():
+    with open('churn_model.pkl', 'rb') as f:
+        return pickle.load(f)
+
 model_data = load_model()
 kmeans = model_data['kmeans']
 scaler = model_data['scaler']
@@ -74,10 +79,28 @@ SEGMENT_DESCRIPTIONS = {
     3: "Lower income, budget-conscious spenders who live alone."
 }
 
-st.title("🛒 SmartCart Customer Segmentation")
-st.markdown("Discover customer insights and predict segments dynamically using unsupervised Machine Learning.")
+st.title("🛒 SmartCart Customer Segmentation & Intelligence")
+st.markdown("Discover customer insights, predict segments dynamically using unsupervised Machine Learning, and make data-driven decisions with our **Predictive Churn Engine** and **Business Recommendation System**.")
 
-tab1, tab2 = st.tabs(["📊 Dashboard Insights", "🔮 Predict Segment"])
+# Project Impact Section (Sidebar)
+with st.sidebar:
+    st.header("🚀 Project Impact")
+    st.markdown("""
+    **Built an AI-Powered Customer Intelligence System using Machine Learning.**
+
+    🔹 Segmented customers into distinct groups using K-Means clustering
+    🔹 Developed a churn prediction model to identify at-risk customers
+    🔹 Designed a recommendation engine to suggest personalized marketing strategies
+    🔹 Created an interactive dashboard using Streamlit for real-time insights
+    🔹 Improved business decision-making by combining segmentation + prediction
+
+    💡 *This system helps businesses increase revenue, reduce churn, and target customers effectively.*
+    
+    ---
+    🔗 **Live Demo:** [https://smartcart-ai-intell.streamlit.app](https://smartcart-ai-intell.streamlit.app)
+    """)
+
+tab1, tab2 = st.tabs(["📊 Dashboard Insights", "🔮 Predict Segment & Churn"])
 
 # --- TAB 1: Dashboard Insights ---
 with tab1:
@@ -185,15 +208,109 @@ with tab2:
         input_scaled = scaler.transform(input_cleaned)
         input_pca = pca.transform(input_scaled)
         
-        # Predict
+        # Predict Segment
         prediction = kmeans.predict(input_pca)[0]
         
-        st.success(f"### 🎉 Customer Belongs to **{SEGMENT_NAMES.get(prediction, f'Segment {prediction}')}** (Segment {prediction})!")
+        # Predict Churn
+        churn_model_data = load_churn_model()
+        churn_model = churn_model_data['model']
         
-        st.balloons()
+        churn_input = pd.DataFrame([{
+            'Age': age, 'Income': income, 'Recency': recency, 'NumDealsPurchases': num_deals,
+            'NumWebPurchases': num_web, 'NumCatalogPurchases': num_catalog, 
+            'NumStorePurchases': num_store, 'NumWebVisitsMonth': num_web_visits,
+            'Customer_Tenure_Days': customer_tenure, 'Total_Spending': total_spending,
+            'Total_Children': total_children
+        }])
         
-        st.info(f"**Segment Insight:** {SEGMENT_DESCRIPTIONS.get(prediction, '')}")
+        churn_prob = churn_model.predict_proba(churn_input)[0][1]
+        churn_risk = "HIGH" if churn_prob > 0.50 else "LOW"
         
-        # Explain briefly what this segment means based on the summary
-        st.write("Detailed Averages for this Segment:")
+        # Determine business logic based on segment
+        if prediction == 2:
+            segment_icon = "💎"
+            segment_tag = "Premium Customer"
+            spending_tag = "High Spending"
+            business_insight = "These customers generate high revenue and are strongly engaged with the brand."
+            rec_strategy = "Target with premium offers and exclusive deals"
+            rec_campaign = "VIP Email Marketing"
+            rec_offer = "Early Access to Luxury Products"
+            rec_priority = "High"
+            rec_actions = ["Promote luxury products", "Give early access deals"]
+        elif prediction == 0:
+            segment_icon = "🛒"
+            segment_tag = "Budget Family"
+            spending_tag = "Budget Conscious"
+            business_insight = "These customers are highly price-sensitive and respond well to discounts."
+            rec_strategy = "Provide discounts and bundle offers"
+            rec_campaign = "Discount/Promo Newsletters"
+            rec_offer = "20% Discount / Buy 1 Get 1"
+            rec_priority = "Medium"
+            rec_actions = ["Send bundle offers", "Provide family bulk discounts"]
+        elif prediction == 1:
+            segment_icon = "👨‍👩‍👧‍👦"
+            segment_tag = "Moderate Spender Family"
+            spending_tag = "Moderate Spending"
+            business_insight = "These customers form the stable core of the business with reliable, steady purchases."
+            rec_strategy = "Encourage upselling and cross-selling"
+            rec_campaign = "Targeted Product Recommendations"
+            rec_offer = "Loyalty Points Multiplier"
+            rec_priority = "Medium"
+            rec_actions = ["Recommend complementary items", "Promote loyalty rewards"]
+        else: # 3
+            segment_icon = "👤"
+            segment_tag = "Budget Single"
+            spending_tag = "Low Spending"
+            business_insight = "These customers are budget-conscious individuals who buy strictly what they need."
+            rec_strategy = "Nudge towards more frequent purchases with low-barrier offers"
+            rec_campaign = "Flash Sales Campaigns"
+            rec_offer = "10% Off Next Purchase"
+            rec_priority = "Low"
+            rec_actions = ["Push limited-time flash sales", "Recommend lower-tier affordable items"]
+
+        # Churn specific actions
+        if churn_risk == "HIGH":
+            churn_actions = ["Send immediate retention offer", "Provide loyalty rewards"]
+            churn_color = "#ff7b72"
+        else:
+            churn_actions = ["Maintain current engagement", "Upsell standard products"]
+            churn_color = "#3fb950"
+
+        if prediction == 2:
+            st.balloons()
+            
+        st.markdown(f"## {segment_icon} {segment_tag}")
+        st.markdown(f"**📈 {spending_tag} | ⚠️ Churn Risk: <span style='color:{churn_color}'>{churn_risk}</span>**", unsafe_allow_html=True)
+        
+        st.markdown(f"**📌 Business Insight:**\n{business_insight}")
+        
+        st.markdown("---")
+        col_rec, col_churn = st.columns(2)
+        
+        with col_rec:
+            st.markdown("### 🎯 Recommended Strategy")
+            st.markdown(f"""
+            - **Strategy:** {rec_strategy}
+            - **Campaign:** {rec_campaign}
+            - **Offer:** {rec_offer}
+            - **Priority:** {rec_priority}
+            
+            **📌 Recommended Action:**
+            """)
+            for action in rec_actions:
+                st.markdown(f"- {action}")
+                
+        with col_churn:
+            st.markdown("### 🚨 Churn Management")
+            st.markdown(f"""
+            - **Risk Level:** <span style='color:{churn_color}; font-weight:bold;'>{churn_risk}</span>
+            - **Churn Probability:** {churn_prob:.1%}
+            
+            **📌 Action:**
+            """, unsafe_allow_html=True)
+            for action in churn_actions:
+                st.markdown(f"- {action}")
+                
+        st.markdown("---")
+        st.write("#### 📊 Detailed Averages for this Segment")
         st.dataframe(cluster_summary.iloc[prediction:prediction+1].style.background_gradient(cmap='Blues'))
