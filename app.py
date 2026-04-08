@@ -147,8 +147,69 @@ with tab1:
     
     st.pyplot(fig)
     
+    st.write("---")
+    st.subheader("Marketing & Purchase Channels by Segment")
+    
+    col_chart1, col_chart2 = st.columns(2)
+    
+    with col_chart1:
+        st.markdown("**Average Total Spending**")
+        fig_spend, ax_spend = plt.subplots(figsize=(6, 4))
+        fig_spend.patch.set_facecolor('#0d1117')
+        ax_spend.set_facecolor('#0d1117')
+        
+        spending_data = df_temp.groupby('Cluster')['Total_Spending'].mean().reset_index()
+        colors = ['#ff7b72', '#79c0ff', '#d2a8ff', '#ffa657']
+        # Handle cases where we have fewer or more than 4 clusters gracefully
+        palette = colors[:len(spending_data)] if len(spending_data) <= 4 else 'viridis'
+        sns.barplot(data=spending_data, x='Cluster', y='Total_Spending', palette=palette, ax=ax_spend)
+        
+        ax_spend.set_xlabel('Segment', color='white')
+        ax_spend.set_ylabel('Avg Total Spending', color='white')
+        ax_spend.tick_params(colors='white')
+        for spine in ax_spend.spines.values():
+            spine.set_color('white')
+        sns.despine(ax=ax_spend, left=False, bottom=False, top=True, right=True)
+        ax_spend.set_xticklabels([SEGMENT_NAMES.get(int(i), f"Seg {i}") for i in spending_data['Cluster']], rotation=45, color='white')
+        
+        st.pyplot(fig_spend)
+
+    with col_chart2:
+        st.markdown("**Purchasing Channels Utilization**")
+        fig_chan, ax_chan = plt.subplots(figsize=(6, 4))
+        fig_chan.patch.set_facecolor('#0d1117')
+        ax_chan.set_facecolor('#0d1117')
+        
+        channels = ['NumWebPurchases', 'NumStorePurchases', 'NumCatalogPurchases']
+        # Check if columns exist
+        channels = [c for c in channels if c in df_temp.columns]
+        
+        if channels:
+            channel_data = df_temp.groupby('Cluster')[channels].mean().reset_index()
+            channel_data_melt = channel_data.melt(id_vars='Cluster', var_name='Channel', value_name='Avg Purchases')
+            channel_data_melt['Channel'] = channel_data_melt['Channel'].str.replace('Num', '').str.replace('Purchases', '')
+            
+            sns.barplot(data=channel_data_melt, x='Cluster', y='Avg Purchases', hue='Channel', ax=ax_chan)
+            
+            ax_chan.set_xlabel('Segment', color='white')
+            ax_chan.set_ylabel('Avg Purchases', color='white')
+            ax_chan.tick_params(colors='white')
+            for spine in ax_chan.spines.values():
+                spine.set_color('white')
+            sns.despine(ax=ax_chan, left=False, bottom=False, top=True, right=True)
+            ax_chan.set_xticklabels([SEGMENT_NAMES.get(int(i), f"Seg {i}") for i in channel_data['Cluster']], rotation=45, color='white')
+            
+            legend = ax_chan.legend(title='Channel', facecolor='#1f2428', edgecolor='white', labelcolor='white')
+            plt.setp(legend.get_title(), color='white')
+            
+            st.pyplot(fig_chan)
+        else:
+            st.info("Purchase channel data not available.")
+    
+    st.write("---")
     st.subheader("Segment Characteristics Summary")
     st.dataframe(cluster_summary.style.background_gradient(cmap='Blues'))
+
 
 # --- TAB 2: Predict Segment ---
 with tab2:
