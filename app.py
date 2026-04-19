@@ -140,7 +140,8 @@ with tab1:
     
     # Custom legend
     handles, labels = scatter.legend_elements()
-    legend_labels = [SEGMENT_NAMES.get(int(i), f"Segment {i}") for i in range(len(handles))]
+    unique_labels = sorted(np.unique(labels_kmeans))
+    legend_labels = [SEGMENT_NAMES.get(i, f"Segment {i}") for i in unique_labels]
     legend1 = ax.legend(handles, legend_labels, title="Segments", facecolor='#1f2428', edgecolor='white', labelcolor='white')
     plt.setp(legend1.get_title(), color='white')
     ax.add_artist(legend1)
@@ -275,6 +276,7 @@ with tab2:
         # Predict Churn
         churn_model_data = load_churn_model()
         churn_model = churn_model_data['model']
+        churn_features = churn_model_data['features']
         
         churn_input = pd.DataFrame([{
             'Age': age, 'Income': income, 'Recency': recency, 'NumDealsPurchases': num_deals,
@@ -284,6 +286,7 @@ with tab2:
             'Total_Children': total_children
         }])
         
+        churn_input = churn_input[churn_features]
         churn_prob = churn_model.predict_proba(churn_input)[0][1]
         churn_risk = "HIGH" if churn_prob > 0.50 else "LOW"
         
@@ -374,4 +377,4 @@ with tab2:
                 
         st.markdown("---")
         st.write("#### 📊 Detailed Averages for this Segment")
-        st.dataframe(cluster_summary.iloc[prediction:prediction+1].style.background_gradient(cmap='Blues'))
+        st.dataframe(cluster_summary.loc[[prediction]].style.background_gradient(cmap='Blues'))
