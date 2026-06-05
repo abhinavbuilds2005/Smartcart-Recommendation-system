@@ -4,7 +4,7 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.0+-red?style=flat-square&logo=streamlit)](https://streamlit.io/)
 [![Scikit-learn](https://img.shields.io/badge/ScikitLearn-ML-orange?style=flat-square&logo=scikit-learn)](https://scikit-learn.org/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)
+[![Status](https://img.shields.io/badge/Status-Active-brightgreen?style=flat-square)]
 
 > An end-to-end machine learning application that combines **customer segmentation**, **churn prediction**, and **personalized marketing recommendations** to drive business growth and customer retention.
 
@@ -50,7 +50,7 @@ This project demonstrates a complete ML pipeline from data preprocessing to prod
 ## 🛠️ Tech Stack
 
 | Category | Technologies |
-|----------|--------------|
+|----------|______________|
 | **Language** | Python 3.8+ |
 | **ML/Data** | Scikit-learn, Pandas, NumPy |
 | **Visualization** | Matplotlib, Seaborn |
@@ -70,7 +70,7 @@ Smartcart-Recommendation-system/
 ├── app.py                      # Main Streamlit application
 ├── train_churn.py              # Churn model training script
 ├── requirements.txt            # Python dependencies
-├── Readme.md                   # Project documentation
+├── README.md                   # Project documentation
 │
 ├── smartcart.ipynb             # Complete ML pipeline notebook
 ├── smartcart_customers.csv     # Dataset (2,200+ records, 29 features)
