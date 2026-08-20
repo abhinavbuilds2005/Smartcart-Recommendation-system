@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCart Customer Segmentation & Intelligence</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <span class="logo-icon">🛒</span>
+                    <h1 class="logo-text">SmartCart<span>AI</span></h1>
+                </div>
+                <p class="logo-tagline">Customer Segmentation & Churn Intelligence</p>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="dashboard-tab">
+                    <span class="btn-icon">📊</span> Dashboard Insights
+                </button>
+                <button class="nav-btn" data-tab="predict-tab">
+                    <span class="btn-icon">🔮</span> Predict Segment & Churn
+                </button>
+            </nav>
+
+            <div class="sidebar-impact">
+                <h3>🚀 Project Impact</h3>
+                <div class="impact-list">
+                    <div class="impact-item">
+                        <span class="item-bullet">🔹</span>
+                        <p>Segmented customers using K-Means Clustering on PCA projections.</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="item-bullet">🔹</span>
+                        <p>Developed a Random Forest model to predict customer churn risks.</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="item-bullet">🔹</span>
+                        <p>Built a personalized marketing recommendation engine.</p>
+                    </div>
+                    <div class="impact-item">
+                        <span class="item-bullet">🔹</span>
+                        <p>Empowered data-driven decision making with dynamic, local, client-side execution.</p>
+                    </div>
+                </div>
+                <div class="sidebar-footer">
+                    <span class="status-indicator"></span> <span>Running Client-Side (Netlify Ready)</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="app-content">
+            <header class="content-header">
+                <div class="header-info">
+                    <h2 id="page-title">📊 Customer Intelligence Dashboard</h2>
+                    <p id="page-description">Explore customer segments, purchasing behavior, and model evaluations dynamically in real-time.</p>
+                </div>
+            </header>
+
+            <!-- TAB 1: DASHBOARD INSIGHTS -->
+            <section id="dashboard-tab" class="tab-content active">
+                <div class="dashboard-metrics-grid">
+                    <div class="metric-card segment-card-0">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="segment-icon">🛒</span>
+                                <span class="segment-code">Segment 0</span>
+                            </div>
+                            <h3>Budget Families</h3>
+                            <div class="metric-value" id="size-seg-0">0</div>
+                            <div class="metric-label">Active Customers</div>
+                            <p class="metric-desc">Lower income, budget-conscious spenders living with a partner.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card segment-card-1">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="segment-icon">👨‍👩‍👧‍👦</span>
+                                <span class="segment-code">Segment 1</span>
+                            </div>
+                            <h3>Moderate Spenders</h3>
+                            <div class="metric-value" id="size-seg-1">0</div>
+                            <div class="metric-label">Active Customers</div>
+                            <p class="metric-desc">Middle-income older families with stable, moderate spending habits.</p>
+                        </div>
+                    </div>
+
+                    <div class="metric-card segment-card-2">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="segment-icon">💎</span>
+                                <span class="segment-code">Segment 2</span>
+                            </div>
+                            <h3>Premium Customers</h3>
+                            <div class="metric-value" id="size-seg-2">0</div>
+                            <div class="metric-label">Active Customers</div>
+                            <p class="metric-desc">High-income, high-spending premium buyers with few children.</p>
+                        </div>
+                    </div>
+
+                    <div class="metric-card segment-card-3">
+                        <div class="card-glow"></div>
+                        <div class="card-content">
+                            <div class="card-header">
+                                <span class="segment-icon">👤</span>
+                                <span class="segment-code">Segment 3</span>
+                            </div>
+                            <h3>Budget Singles</h3>
+                            <div class="metric-value" id="size-seg-3">0</div>
+                            <div class="metric-label">Active Customers</div>
+                            <p class="metric-desc">Lower income, budget-conscious individuals living alone.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-layout">
+                    <!-- Row 1: Scatter plot (Full Width) -->
+                    <div class="chart-container scatter-container">
+                        <div class="chart-header">
+                            <h3>Scatter Visualization: Income vs Spending</h3>
+                            <p>Interactive 2D projection of the dataset color-coded by predicted cluster segment.</p>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="scatterChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Bar charts (Two columns) -->
+                    <div class="charts-grid-2">
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Average Total Spending</h3>
+                                <p>Comparing average customer spending habits across each segment ($).</p>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="spendingBarChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3>Purchasing Channels Utilization</h3>
+                                <p>Average channels utilized for ordering (Web vs. Store vs. Catalog).</p>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="channelsBarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cluster characteristics table -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Segment Demographics & Purchasing Averages</h3>
+                        <p>Key numeric features computed as group means across customer categories.</p>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="summary-table">
+                            <thead>
+                                <tr>
+                                    <th>Segment Name</th>
+                                    <th>Avg Income</th>
+                                    <th>Avg Recency</th>
+                                    <th>Deals Purchases</th>
+                                    <th>Web Purchases</th>
+                                    <th>Catalog Purchases</th>
+                                    <th>Store Purchases</th>
+                                    <th>Web Visits/Mo</th>
+                                    <th>Avg Age</th>
+                                    <th>Tenure (Days)</th>
+                                    <th>Avg Spending</th>
+                                    <th>Avg Children</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summary-table-body">
+                                <!-- Loaded dynamically via app.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: PREDICT SEGMENT & CHURN -->
+            <section id="predict-tab" class="tab-content">
+                <div class="predict-layout">
+                    <!-- Form Container -->
+                    <div class="form-container">
+                        <div class="form-header">
+                            <h3>🔮 Customer Profiler</h3>
+                            <p>Provide demographic details and purchasing records to run client-side inference.</p>
+                        </div>
+                        
+                        <form id="prediction-form">
+                            <div class="form-grid">
+                                <!-- Column 1: Demographics -->
+                                <div class="form-section">
+                                    <h4 class="section-title">👤 Demographics & Tenure</h4>
+                                    <div class="form-group">
+                                        <label for="age">Age</label>
+                                        <input type="number" id="age" name="age" min="18" max="100" value="35" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="income">Income ($)</label>
+                                        <input type="number" id="income" name="income" min="0" max="250000" value="50000" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customer_tenure">Customer Tenure (Days)</label>
+                                        <input type="number" id="customer_tenure" name="customer_tenure" min="0" value="500" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="total_children">Total Children</label>
+                                        <input type="number" id="total_children" name="total_children" min="0" max="10" value="1" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="education">Education Level</label>
+                                        <select id="education" name="education">
+                                            <option value="Undergraduate">Undergraduate</option>
+                                            <option value="Graduate" selected>Graduate</option>
+                                            <option value="Postgraduate">Postgraduate</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="living_with">Living Situation</label>
+                                        <select id="living_with" name="living_with">
+                                            <option value="Alone">Alone</option>
+                                            <option value="Partner" selected>Partner</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Column 2: Purchasing Channels -->
+                                <div class="form-section">
+                                    <h4 class="section-title">🛒 Purchase Channels</h4>
+                                    <div class="form-group">
+                                        <label for="total_spending">Total Spending ($)</label>
+                                        <input type="number" id="total_spending" name="total_spending" min="0" value="500" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_deals">Num Deals Purchases</label>
+                                        <input type="number" id="num_deals" name="num_deals" min="0" value="2" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_web">Num Web Purchases</label>
+                                        <input type="number" id="num_web" name="num_web" min="0" value="5" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_catalog">Num Catalog Purchases</label>
+                                        <input type="number" id="num_catalog" name="num_catalog" min="0" value="2" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_store">Num Store Purchases</label>
+                                        <input type="number" id="num_store" name="num_store" min="0" value="5" required>
+                                    </div>
+                                </div>
+
+                                <!-- Column 3: Customer Behavior -->
+                                <div class="form-section">
+                                    <h4 class="section-title">📉 Customer Behavior</h4>
+                                    <div class="form-group">
+                                        <label for="recency">Recency (Days since last purchase)</label>
+                                        <input type="number" id="recency" name="recency" min="0" value="10" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="num_web_visits">Num Web Visits / Month</label>
+                                        <input type="number" id="num_web_visits" name="num_web_visits" min="0" value="5" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="complain">Complain in last 2 years?</label>
+                                        <select id="complain" name="complain">
+                                            <option value="0" selected>No</option>
+                                            <option value="1">Yes</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="response">Accepted recent campaign?</label>
+                                        <select id="response" name="response">
+                                            <option value="0" selected>No</option>
+                                            <option value="1">Yes</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="submit-btn">Run Customer Analysis 🔮</button>
+                        </form>
+                    </div>
+
+                    <!-- Results Output (Initially Hidden) -->
+                    <div class="results-container" id="prediction-results" style="display: none;">
+                        <div class="results-header">
+                            <h3>🔍 Analysis Output</h3>
+                            <p>AI models evaluated successfully. Read target actions below.</p>
+                        </div>
+
+                        <!-- Top row: Segment + Churn -->
+                        <div class="results-top-row">
+                            <div class="segment-result-card" id="result-segment-card">
+                                <div class="card-glow"></div>
+                                <span class="res-badge">Predicted Group</span>
+                                <div class="res-segment-header">
+                                    <span class="res-icon" id="res-segment-icon">💎</span>
+                                    <h2 id="res-segment-title">Premium Customer</h2>
+                                </div>
+                                <p class="res-tagline" id="res-segment-tagline">High Income | High Spending</p>
+                                <p class="res-desc" id="res-segment-desc">These customers generate high revenue and are strongly engaged with the brand.</p>
+                            </div>
+
+                            <div class="churn-result-card">
+                                <span class="res-badge">Retention Risk</span>
+                                <div class="churn-visual-gauge">
+                                    <svg class="gauge-svg" viewBox="0 0 100 100">
+                                        <circle class="gauge-bg" cx="50" cy="50" r="40" />
+                                        <circle class="gauge-fill" id="gauge-fill-circle" cx="50" cy="50" r="40" stroke-dasharray="251.2" stroke-dashoffset="251.2" />
+                                    </svg>
+                                    <div class="gauge-center">
+                                        <span class="gauge-percent" id="res-churn-percent">0%</span>
+                                        <span class="gauge-label" id="res-churn-risk-text">LOW</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Action Cards -->
+                        <div class="action-grid">
+                            <div class="action-card">
+                                <div class="action-header">
+                                    <span class="action-icon">🎯</span>
+                                    <h4>Recommended Strategy</h4>
+                                </div>
+                                <ul class="action-details">
+                                    <li><strong>Core Action:</strong> <span id="res-rec-strategy">Upsell standard products</span></li>
+                                    <li><strong>Campaign:</strong> <span id="res-rec-campaign">Targeted Emails</span></li>
+                                    <li><strong>Special Offer:</strong> <span id="res-rec-offer">Loyalty Multiplier</span></li>
+                                    <li><strong>Priority Level:</strong> <span class="priority-badge" id="res-rec-priority">Medium</span></li>
+                                </ul>
+                                <h5 class="action-checklist-title">Execution Checklist:</h5>
+                                <ul class="action-checklist" id="res-rec-checklist">
+                                    <!-- Items loaded dynamically -->
+                                </ul>
+                            </div>
+
+                            <div class="action-card">
+                                <div class="action-header">
+                                    <span class="action-icon">🚨</span>
+                                    <h4>Retention & Churn Management</h4>
+                                </div>
+                                <ul class="action-details">
+                                    <li><strong>Model Risk Evaluation:</strong> <span id="res-churn-details">Low Churn Probability</span></li>
+                                    <li><strong>Trigger Code:</strong> <span id="res-churn-triggers">Recent activity is satisfactory.</span></li>
+                                </ul>
+                                <h5 class="action-checklist-title">Suggested Retention Checklist:</h5>
+                                <ul class="action-checklist" id="res-churn-checklist">
+                                    <!-- Items loaded dynamically -->
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Comparative averages table -->
+                        <div class="compare-table-container">
+                            <h4>📊 Comparing Profile to Predicted Group Average</h4>
+                            <div class="table-responsive">
+                                <table id="compare-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Feature</th>
+                                            <th>Your Input Profile</th>
+                                            <th>Segment Average</th>
+                                            <th>Difference</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="compare-table-body">
+                                        <!-- Loaded dynamically via app.js -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Balloon Canvas for Premium Customer celebration -->
+    <canvas id="balloonCanvas" style="display:none;"></canvas>
+
+    <!-- Load scripts in order -->
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
