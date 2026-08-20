@@ -1,0 +1,12 @@
+# Ignore Python and model files during Vercel deployment
+app.py
+train_churn.py
+requirements.txt
+model.pkl
+churn_model.pkl
+smartcart.ipynb
+smartcart_customers.csv
+dataset_summary.json
+model_parameters.json
+C:\Users\Lenovo\.gemini\antigravity-ide\brain\947c098e-aa59-490f-9471-bbfc32352cfd\scratch\
+C:\Users\Lenovo\.gemini\antigravity-ide\brain\947c098e-aa59-490f-9471-bbfc32352cfd\
